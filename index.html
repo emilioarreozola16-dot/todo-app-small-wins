@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f4ef">
+  <title>Small wins — to-do</title>
+  <!--
+    THESIS: A focused task list should feel like a clear desk, not a dashboard.
+    OWN-WORLD: Ink navy, chalk paper, and one electric lime action color; ruled rows and compact controls.
+    STORY: Capture one next step, mark it finished, and keep the list honest.
+    FIRST VIEWPORT: A narrow centered column opens with the day title, progress, and an immediate add field.
+    FORM: Operate-first list composition; the task rows are the surface, with no decorative card maze.
+  -->
+  <style>
+    :root {
+      color-scheme: light dark;
+      --paper: #f4f4ef;
+      --paper-raised: #fbfbf7;
+      --ink: #192533;
+      --muted: #66717b;
+      --line: #d9ddd8;
+      --accent: #b9f227;
+      --accent-ink: #1d2b0a;
+      --danger: #b84451;
+      --shadow: 0 16px 42px rgba(25, 37, 51, .09);
+      --radius: 14px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #12181d;
+        --paper-raised: #1a2229;
+        --ink: #edf1ea;
+        --muted: #9ca7ab;
+        --line: #303b42;
+        --accent: #c3f53a;
+        --accent-ink: #182209;
+        --danger: #ff7d87;
+        --shadow: 0 18px 50px rgba(0, 0, 0, .24);
+      }
+    }
+
+    * { box-sizing: border-box; }
+    html { min-width: 320px; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 32px 16px 48px;
+      background: var(--paper);
+      color: var(--ink);
+      font: 15px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      width: min(100%, 480px);
+      margin: 0 auto;
+      animation: settle-in 500ms cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .topline, .list-heading, .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .topline {
+      margin-bottom: 34px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink);
+      font-weight: 750;
+      letter-spacing: .02em;
+      text-transform: none;
+    }
+
+    .mark-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+    }
+
+    h1 {
+      max-width: 8ch;
+      margin: 0 0 26px;
+      font-size: clamp(2.65rem, 12vw, 4.4rem);
+      line-height: .92;
+      letter-spacing: -.065em;
+      font-weight: 760;
+    }
+
+    .composer {
+      display: flex;
+      gap: 9px;
+      padding: 7px;
+      margin-bottom: 30px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper-raised);
+      box-shadow: var(--shadow);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    input[type="text"] {
+      min-width: 0;
+      flex: 1;
+      border: 0;
+      outline: 0;
+      padding: 10px 11px;
+      color: var(--ink);
+      background: transparent;
+      font: inherit;
+    }
+
+    input[type="text"]::placeholder { color: var(--muted); }
+    input[type="text"]:focus-visible { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 38%, transparent); border-radius: 8px; }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      font: inherit;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .add-button {
+      flex: 0 0 auto;
+      min-width: 42px;
+      min-height: 42px;
+      border-radius: 10px;
+      background: var(--accent);
+      color: var(--accent-ink);
+      font-size: 22px;
+      line-height: 1;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .add-button:hover { transform: translateY(-1px); box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 32%, transparent); }
+    .add-button:active { transform: translateY(1px) scale(.97); }
+    .add-button:focus-visible, .delete-button:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 60%, transparent); outline-offset: 2px; }
+
+    .list-heading {
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .count {
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tasks {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      border-top: 1px solid var(--line);
+    }
+
+    .task {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 64px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+      animation: task-in 360ms cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .check {
+      position: relative;
+      display: grid;
+      flex: 0 0 22px;
+      width: 22px;
+      height: 22px;
+      place-items: center;
+      border: 1.5px solid var(--muted);
+      border-radius: 7px;
+      background: transparent;
+      transition: background 200ms ease, border-color 200ms ease, transform 200ms ease;
+    }
+
+    .check:hover { border-color: var(--ink); transform: scale(1.06); }
+    .check::after {
+      content: "";
+      width: 10px;
+      height: 6px;
+      border-bottom: 2px solid var(--accent-ink);
+      border-left: 2px solid var(--accent-ink);
+      transform: rotate(-45deg) scale(0);
+      transition: transform 180ms cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    .task.done .check { border-color: var(--accent); background: var(--accent); }
+    .task.done .check::after { transform: rotate(-45deg) scale(1); }
+
+    .task-label {
+      min-width: 0;
+      flex: 1;
+      overflow-wrap: anywhere;
+      transition: color 200ms ease, opacity 200ms ease;
+    }
+
+    .task.done .task-label { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 1.5px; text-decoration-color: var(--muted); }
+
+    .delete-button {
+      flex: 0 0 30px;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      color: var(--muted);
+      background: transparent;
+      opacity: 0;
+      font-size: 19px;
+      line-height: 1;
+      transition: opacity 160ms ease, color 160ms ease, background 160ms ease;
+    }
+
+    .task:hover .delete-button, .delete-button:focus-visible { opacity: 1; }
+    .delete-button:hover { color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, transparent); }
+
+    .empty {
+      padding: 30px 0 26px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .empty strong { display: block; margin-bottom: 4px; color: var(--ink); }
+
+    .footer {
+      margin-top: 18px;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .clear-button {
+      padding: 5px 0;
+      color: inherit;
+      background: transparent;
+      text-decoration: underline;
+      text-decoration-color: var(--line);
+      text-underline-offset: 3px;
+    }
+
+    .clear-button:hover { color: var(--danger); text-decoration-color: currentColor; }
+    .clear-button:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 60%, transparent); outline-offset: 3px; border-radius: 4px; }
+
+    @keyframes settle-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+    @keyframes task-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+    @media (max-width: 380px) {
+      body { padding-top: 22px; }
+      .topline { margin-bottom: 26px; }
+      h1 { margin-bottom: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="topline">
+      <span class="mark"><span class="mark-dot" aria-hidden="true"></span>Small wins</span>
+      <span id="date"></span>
+    </div>
+
+    <h1>Make room for what matters.</h1>
+
+    <form class="composer" id="task-form">
+      <label class="sr-only" for="task-input">Add a task</label>
+      <input id="task-input" type="text" maxlength="120" autocomplete="off" placeholder="What needs doing?" required>
+      <button class="add-button" type="submit" aria-label="Add task">+</button>
+    </form>
+
+    <section aria-labelledby="list-heading">
+      <div class="list-heading">
+        <span id="list-heading">Today</span>
+        <span class="count" id="count" aria-live="polite"></span>
+      </div>
+      <ul class="tasks" id="tasks"></ul>
+    </section>
+
+    <div class="footer">
+      <span id="hint">Stored on this device</span>
+      <button class="clear-button" id="clear-completed" type="button">Clear completed</button>
+    </div>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "small-wins-tasks";
+    const examples = [
+      { id: "welcome-1", text: "Choose one thing to focus on", done: false },
+      { id: "welcome-2", text: "Make a little progress", done: false },
+      { id: "welcome-3", text: "Leave tomorrow a clean start", done: true }
+    ];
+
+    const form = document.querySelector("#task-form");
+    const input = document.querySelector("#task-input");
+    const list = document.querySelector("#tasks");
+    const count = document.querySelector("#count");
+    const clearButton = document.querySelector("#clear-completed");
+    const date = document.querySelector("#date");
+    let tasks = loadTasks();
+
+    date.textContent = new Intl.DateTimeFormat(undefined, { weekday: "short", month: "short", day: "numeric" }).format(new Date());
+
+    function loadTasks() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        return Array.isArray(saved) ? saved.filter(task => task && typeof task.text === "string") : examples;
+      } catch {
+        return examples;
+      }
+    }
+
+    function saveTasks() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    }
+
+    function render() {
+      list.innerHTML = "";
+      const remaining = tasks.filter(task => !task.done).length;
+      count.textContent = `${remaining} ${remaining === 1 ? "left" : "left"}`;
+
+      if (!tasks.length) {
+        list.innerHTML = '<li class="empty"><strong>Nothing here yet.</strong>Add a small win above.</li>';
+        return;
+      }
+
+      tasks.forEach((task, index) => {
+        const item = document.createElement("li");
+        item.className = `task${task.done ? " done" : ""}`;
+        item.style.animationDelay = `${Math.min(index * 45, 180)}ms`;
+        item.innerHTML = `
+          <button class="check" type="button" aria-label="${task.done ? "Mark incomplete" : "Mark complete"}" aria-pressed="${task.done}"></button>
+          <span class="task-label">${escapeHtml(task.text)}</span>
+          <button class="delete-button" type="button" aria-label="Delete task">×</button>
+        `;
+        item.querySelector(".check").addEventListener("click", () => {
+          task.done = !task.done;
+          saveTasks();
+          render();
+        });
+        item.querySelector(".delete-button").addEventListener("click", () => {
+          item.style.opacity = "0";
+          item.style.transform = "translateX(8px)";
+          setTimeout(() => {
+            tasks = tasks.filter(candidate => candidate.id !== task.id);
+            saveTasks();
+            render();
+          }, 150);
+        });
+        list.appendChild(item);
+      });
+    }
+
+    function escapeHtml(value) {
+      return value.replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+      tasks.unshift({ id: `${Date.now()}-${Math.random().toString(16).slice(2)}`, text, done: false });
+      saveTasks();
+      input.value = "";
+      render();
+      input.focus();
+    });
+
+    clearButton.addEventListener("click", () => {
+      if (!tasks.some(task => task.done)) return;
+      tasks = tasks.filter(task => !task.done);
+      saveTasks();
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
