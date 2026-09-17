@@ -22,6 +22,24 @@
       --shadow: 0 20px 50px rgba(16, 35, 28, .13);
       --radius: 18px;
     }
+    body.sport-soccer {
+      --sport-primary: #d6f26b;
+      --sport-secondary: #2f8f64;
+      --sport-soft: #e6f4c2;
+      --sport-ink: #183129;
+    }
+    body.sport-basketball {
+      --sport-primary: #ff9b4a;
+      --sport-secondary: #4388d2;
+      --sport-soft: #ffe0b8;
+      --sport-ink: #19324d;
+    }
+    body.sport-track {
+      --sport-primary: #ff7563;
+      --sport-secondary: #4f91d7;
+      --sport-soft: #ffd4cc;
+      --sport-ink: #38233b;
+    }
 
     * { box-sizing: border-box; }
     html { min-width: 0; }
@@ -154,6 +172,57 @@
       border: 1px solid var(--line);
       border-radius: 22px;
       box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    body.sport-soccer .challenge,
+    body.sport-basketball .challenge,
+    body.sport-track .challenge {
+      border-color: color-mix(in srgb, var(--sport-secondary) 32%, var(--line));
+    }
+    body.sport-soccer .challenge-head,
+    body.sport-basketball .challenge-head,
+    body.sport-track .challenge-head {
+      margin: calc(-1 * clamp(22px, 4vw, 36px)) calc(-1 * clamp(22px, 4vw, 36px)) 23px;
+      padding: 15px clamp(22px, 4vw, 36px);
+      background: var(--sport-secondary);
+    }
+    body.sport-soccer .challenge-number,
+    body.sport-basketball .challenge-number,
+    body.sport-track .challenge-number {
+      color: #fff;
+    }
+    body.sport-soccer .tag,
+    body.sport-basketball .tag,
+    body.sport-track .tag {
+      background: var(--sport-primary);
+      color: var(--sport-ink);
+    }
+    body.sport-soccer .progress-value,
+    body.sport-basketball .progress-value,
+    body.sport-track .progress-value {
+      background: var(--sport-secondary);
+    }
+    body.sport-soccer .primary-button,
+    body.sport-basketball .primary-button,
+    body.sport-track .primary-button {
+      background: var(--sport-primary);
+      color: var(--sport-ink);
+    }
+    body.sport-soccer .data-chip,
+    body.sport-basketball .data-chip,
+    body.sport-track .data-chip {
+      background: var(--sport-soft);
+      color: var(--sport-ink);
+    }
+    body.sport-soccer .diagram-accent,
+    body.sport-basketball .diagram-accent,
+    body.sport-track .diagram-accent {
+      fill: var(--sport-primary);
+    }
+    body.sport-soccer .diagram-badge,
+    body.sport-basketball .diagram-badge,
+    body.sport-track .diagram-badge {
+      fill: var(--sport-ink);
     }
     .challenge-head { justify-content: space-between; gap: 12px; margin-bottom: 23px; flex-wrap: wrap; }
     .tag { padding: 6px 9px; color: var(--night); background: var(--blue); border-radius: 7px; font-size: 11px; font-weight: 850; letter-spacing: .07em; text-transform: uppercase; }
@@ -489,6 +558,8 @@
       streak.textContent = `${progress.streak} day${progress.streak === 1 ? "" : "s"} streak`;
     }
     function render() {
+      document.body.classList.remove("sport-soccer", "sport-basketball", "sport-track");
+      document.body.classList.add(`sport-${progress.sport}`);
       renderSports();
       renderStats();
       if (!current) current = sportChallenges()[currentIndex()];
