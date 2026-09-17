@@ -228,6 +228,44 @@
       background: #e1ebf4;
       border: 1px solid var(--line);
     }
+    .sport-illustration {
+      display: grid;
+      grid-template-columns: minmax(110px, 155px) 1fr;
+      min-height: 144px;
+      align-items: center;
+      gap: 18px;
+      padding: 10px 18px;
+      background: var(--paper-2);
+    }
+    .sport-illustration img {
+      width: 100%;
+      height: 124px;
+      object-fit: contain;
+      object-position: center;
+      mix-blend-mode: multiply;
+    }
+    .illustration-copy { min-width: 0; }
+    .illustration-title {
+      margin: 0 0 6px;
+      color: var(--sport-ink);
+      font-size: 16px;
+      letter-spacing: -.02em;
+    }
+    .illustration-copy p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .illustration-math {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 5px 8px;
+      color: var(--sport-ink);
+      background: var(--sport-soft);
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 800;
+    }
     .diagram {
       display: block;
       width: 100%;
@@ -369,6 +407,8 @@
       .play-steps { grid-template-columns: 1fr; }
       .answer-row { flex-direction: column; }
       .primary-button { width: 100%; }
+      .sport-illustration { grid-template-columns: 105px 1fr; gap: 12px; padding: 8px 10px; }
+      .sport-illustration img { height: 126px; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
@@ -569,50 +609,20 @@
     }
     function renderSportScene() {
       if (progress.sport === "basketball") {
-        return `<div class="sport-scene" aria-label="Practical basketball diagram showing 24 points split into four equal groups">
-          <svg class="diagram" viewBox="0 0 640 144" role="img" aria-labelledby="basketball-diagram-title">
-            <title id="basketball-diagram-title">Three quarters of 24 points equals 18 points</title>
-            <text x="24" y="27" class="diagram-title">BASKETBALL · SPLIT THE WHOLE</text>
-            <rect x="24" y="47" width="198" height="59" rx="12" class="diagram-box"/>
-            <text x="45" y="72" class="diagram-note">TOTAL SCORE</text><text x="45" y="96" class="diagram-number">24 points</text>
-            <path d="M238 77 H278" class="diagram-line"/><path d="M268 67 L278 77 268 87" fill="none" class="diagram-line"/>
-            <g transform="translate(300 47)">
-              <rect x="0" y="0" width="66" height="59" rx="10" class="diagram-accent"/>
-              <rect x="74" y="0" width="66" height="59" rx="10" class="diagram-accent"/>
-              <rect x="148" y="0" width="66" height="59" rx="10" class="diagram-accent"/>
-              <rect x="222" y="0" width="66" height="59" rx="10" class="diagram-muted"/>
-              <text x="20" y="35" class="diagram-number">6</text><text x="94" y="35" class="diagram-number">6</text><text x="168" y="35" class="diagram-number">6</text><text x="242" y="35" class="diagram-number">6</text>
-            </g>
-            <text x="302" y="128" class="diagram-badge">3 groups × 6 = 18</text>
-          </svg>
+        return `<div class="sport-scene sport-illustration" aria-label="Basketball player illustration">
+          <img src="assets/sports/basketball-kid.png" alt="Child basketball player ready to shoot">
+          <div class="illustration-copy"><h4 class="illustration-title">Split the score into equal groups</h4><p>Three groups out of four make the part we need.</p><span class="illustration-math">24 ÷ 4 × 3 = 18</span></div>
         </div>`;
       }
       if (progress.sport === "track") {
-        return `<div class="sport-scene" aria-label="Practical track diagram showing 25 percent as one quarter of 12 minutes">
-          <svg class="diagram" viewBox="0 0 640 144" role="img" aria-labelledby="track-diagram-title">
-            <title id="track-diagram-title">One quarter of 12 minutes equals 3 minutes</title>
-            <text x="24" y="27" class="diagram-title">TRACK · FIND ONE QUARTER</text>
-            <rect x="24" y="51" width="472" height="30" rx="15" class="diagram-muted"/>
-            <rect x="24" y="51" width="118" height="30" rx="15" class="diagram-orange"/>
-            <path d="M142 45 V91" class="diagram-line"/>
-            <text x="24" y="111" class="diagram-number">3 min</text><text x="204" y="111" class="diagram-note">+ 3</text><text x="292" y="111" class="diagram-note">+ 3</text><text x="380" y="111" class="diagram-note">+ 3</text>
-            <text x="510" y="71" class="diagram-number">12 min</text><text x="510" y="91" class="diagram-note">whole</text>
-            <text x="24" y="128" class="diagram-badge">25% = 1 of 4 equal parts</text>
-          </svg>
+        return `<div class="sport-scene sport-illustration" aria-label="Track runner illustration">
+          <img src="assets/sports/track-kid.png" alt="Child runner on a track">
+          <div class="illustration-copy"><h4 class="illustration-title">Find one quarter of the time</h4><p>25% means one of four equal parts.</p><span class="illustration-math">12 ÷ 4 = 3 min</span></div>
         </div>`;
       }
-      return `<div class="sport-scene" aria-label="Practical soccer diagram showing 8 completed passes out of 20">
-        <svg class="diagram" viewBox="0 0 640 144" role="img" aria-labelledby="soccer-diagram-title">
-          <title id="soccer-diagram-title">8 completed passes out of 20 equals 40 percent</title>
-          <text x="24" y="27" class="diagram-title">SOCCER · PART OF THE WHOLE</text>
-          <g transform="translate(24 50)">
-            <rect x="0" y="0" width="28" height="28" rx="6" class="diagram-accent"/><rect x="34" y="0" width="28" height="28" rx="6" class="diagram-accent"/><rect x="68" y="0" width="28" height="28" rx="6" class="diagram-accent"/><rect x="102" y="0" width="28" height="28" rx="6" class="diagram-accent"/><rect x="136" y="0" width="28" height="28" rx="6" class="diagram-accent"/><rect x="170" y="0" width="28" height="28" rx="6" class="diagram-accent"/><rect x="204" y="0" width="28" height="28" rx="6" class="diagram-accent"/><rect x="238" y="0" width="28" height="28" rx="6" class="diagram-accent"/>
-            <rect x="272" y="0" width="28" height="28" rx="6" class="diagram-muted"/><rect x="306" y="0" width="28" height="28" rx="6" class="diagram-muted"/><rect x="340" y="0" width="28" height="28" rx="6" class="diagram-muted"/><rect x="374" y="0" width="28" height="28" rx="6" class="diagram-muted"/>
-          </g>
-          <text x="24" y="101" class="diagram-number">8</text><text x="49" y="101" class="diagram-note">completed</text><text x="177" y="101" class="diagram-number">/ 20</text><text x="234" y="101" class="diagram-note">total passes</text>
-          <path d="M400 64 H450" class="diagram-line"/><path d="M440 54 L450 64 440 74" fill="none" class="diagram-line"/>
-          <text x="480" y="72" class="diagram-number">40%</text><text x="480" y="92" class="diagram-note">success rate</text>
-        </svg>
+      return `<div class="sport-scene sport-illustration" aria-label="Soccer player illustration">
+        <img src="assets/sports/soccer-kid.png" alt="Child soccer player with a ball">
+        <div class="illustration-copy"><h4 class="illustration-title">Compare the part with the whole</h4><p>Completed passes are the part; all passes are the whole.</p><span class="illustration-math">8 ÷ 20 = 40%</span></div>
       </div>`;
     }
     function renderChallenge(challenge) {
