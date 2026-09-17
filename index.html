@@ -329,6 +329,12 @@
         explanation: "20 ÷ 5 = 4 groups. Scale 3 goals by 4: 3 × 4 = 12 goals."
       },
       {
+        id: "soccer-3", sport: "soccer", tag: "Match stats", prompt: "Your team had 30 shots and 6 became goals. What percentage of shots became goals?",
+        chips: ["6 goals", "30 shots", "Find a percentage"], answer: 20, unit: "%",
+        method: "part-whole", hint: "Goals are the part and shots are the whole. Divide 6 by 30, then multiply by 100.",
+        explanation: "6 ÷ 30 = 0.2. Then 0.2 × 100 = 20%, so 20% of the shots became goals."
+      },
+      {
         id: "basketball-1", sport: "basketball", tag: "Percentages", prompt: "A player made 18 out of 24 free throws. What was their free-throw percentage?",
         chips: ["18 made", "24 attempts", "Find a percentage"], answer: 75, unit: "%", method: "part-whole",
         hint: "Use made shots ÷ attempts. Look for a decimal you can turn into a percentage.",
@@ -339,6 +345,12 @@
         chips: ["2 points", "3 rebounds", "15 rebounds"], answer: 10, unit: "points", method: "scale-up",
         hint: "15 rebounds is 5 groups of 3. Multiply the points by those same 5 groups.",
         explanation: "15 ÷ 3 = 5 groups. 2 points × 5 = 10 points."
+      },
+      {
+        id: "basketball-3", sport: "basketball", tag: "Game stats", prompt: "A player scored 24 points. Three quarters came from two-point shots. How many points came from two-point shots?",
+        chips: ["24 total points", "3/4 from two-pointers", "Find the part"], answer: 18, unit: "points",
+        method: "fraction-percent", hint: "Three quarters means divide 24 into 4 equal groups, then take 3 groups.",
+        explanation: "24 ÷ 4 = 6 points in one quarter. 6 × 3 = 18, so 18 points came from two-point shots."
       },
       {
         id: "track-1", sport: "track", tag: "Percentages", prompt: "A runner improves a 12-minute time by 25%. How many minutes is the improvement?",
@@ -414,8 +426,9 @@
       const percent = Math.round((progress.completed.length / total) * 100);
       progressValue.style.width = `${Math.min(percent, 100)}%`;
       progressCount.textContent = `${done} / ${available.length}`;
-      score.textContent = `${progress.correct * 10} pts`;
-      scoreCaption.innerHTML = progress.correct ? "Keep your<br>thinking sharp" : "Build your<br>match-day toolkit";
+      const seasonScore = Math.round((progress.completed.length / total) * 100);
+      score.textContent = `${seasonScore} pts`;
+      scoreCaption.innerHTML = seasonScore ? "Keep your<br>thinking sharp" : "Build your<br>match-day toolkit";
       level.textContent = progress.correct >= 5 ? "Playmaker" : progress.correct >= 2 ? "Starter" : "Rookie";
       streak.textContent = `${progress.streak} day${progress.streak === 1 ? "" : "s"} streak`;
     }
