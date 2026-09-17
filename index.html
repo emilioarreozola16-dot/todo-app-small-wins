@@ -3,42 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f4f4ef">
-  <title>Small wins — to-do</title>
-  <!--
-    THESIS: A focused task list should feel like a clear desk, not a dashboard.
-    OWN-WORLD: Ink navy, chalk paper, and one electric lime action color; ruled rows and compact controls.
-    STORY: Capture one next step, mark it finished, and keep the list honest.
-    FIRST VIEWPORT: A narrow centered column opens with the day title, progress, and an immediate add field.
-    FORM: Operate-first list composition; the task rows are the surface, with no decorative card maze.
-  -->
+  <meta name="theme-color" content="#10231c">
+  <title>Playbook — Learn maths through sport</title>
   <style>
     :root {
-      color-scheme: light dark;
-      --paper: #f4f4ef;
-      --paper-raised: #fbfbf7;
-      --ink: #192533;
-      --muted: #66717b;
-      --line: #d9ddd8;
-      --accent: #b9f227;
-      --accent-ink: #1d2b0a;
-      --danger: #b84451;
-      --shadow: 0 16px 42px rgba(25, 37, 51, .09);
-      --radius: 14px;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --paper: #12181d;
-        --paper-raised: #1a2229;
-        --ink: #edf1ea;
-        --muted: #9ca7ab;
-        --line: #303b42;
-        --accent: #c3f53a;
-        --accent-ink: #182209;
-        --danger: #ff7d87;
-        --shadow: 0 18px 50px rgba(0, 0, 0, .24);
-      }
+      --night: #10231c;
+      --night-2: #17382c;
+      --paper: #f7f3e8;
+      --paper-2: #fffdf7;
+      --ink: #183129;
+      --muted: #62756c;
+      --line: #dbe1d7;
+      --lime: #d6f26b;
+      --orange: #ff915c;
+      --blue: #8cd9ed;
+      --green: #2f8f64;
+      --red: #b84c4c;
+      --shadow: 0 20px 50px rgba(16, 35, 28, .13);
+      --radius: 18px;
     }
 
     * { box-sizing: border-box; }
@@ -46,361 +28,492 @@
     body {
       margin: 0;
       min-height: 100vh;
-      padding: 32px 16px 48px;
-      background: var(--paper);
       color: var(--ink);
-      font: 15px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--paper);
+      font: 16px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       -webkit-font-smoothing: antialiased;
     }
 
-    .app {
-      width: min(100%, 480px);
-      margin: 0 auto;
-      animation: settle-in 500ms cubic-bezier(.22, 1, .36, 1) both;
+    button, input { font: inherit; }
+    button { border: 0; cursor: pointer; }
+    button:focus-visible, input:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+    .shell { width: min(100% - 32px, 1040px); margin: 0 auto; }
+    .topbar {
+      color: var(--paper);
+      background: var(--night);
+      border-bottom: 4px solid var(--lime);
     }
-
-    .topline, .list-heading, .footer {
+    .topbar-inner, .brand, .top-actions, .score-row, .challenge-head, .section-head, .feedback-title, .progress-line {
       display: flex;
       align-items: center;
-      justify-content: space-between;
     }
-
-    .topline {
-      margin-bottom: 34px;
-      color: var(--muted);
-      font-size: 12px;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-
-    .mark {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--ink);
-      font-weight: 750;
-      letter-spacing: .02em;
-      text-transform: none;
-    }
-
-    .mark-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
-    }
-
-    h1 {
-      max-width: 8ch;
-      margin: 0 0 26px;
-      font-size: clamp(2.65rem, 12vw, 4.4rem);
-      line-height: .92;
-      letter-spacing: -.065em;
-      font-weight: 760;
-    }
-
-    .composer {
-      display: flex;
-      gap: 9px;
-      padding: 7px;
-      margin-bottom: 30px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--paper-raised);
-      box-shadow: var(--shadow);
-    }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    input[type="text"] {
-      min-width: 0;
-      flex: 1;
-      border: 0;
-      outline: 0;
-      padding: 10px 11px;
-      color: var(--ink);
-      background: transparent;
-      font: inherit;
-    }
-
-    input[type="text"]::placeholder { color: var(--muted); }
-    input[type="text"]:focus-visible { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 38%, transparent); border-radius: 8px; }
-
-    button {
-      border: 0;
-      cursor: pointer;
-      font: inherit;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .add-button {
-      flex: 0 0 auto;
-      min-width: 42px;
-      min-height: 42px;
-      border-radius: 10px;
-      background: var(--accent);
-      color: var(--accent-ink);
-      font-size: 22px;
-      line-height: 1;
-      transition: transform 160ms ease, box-shadow 160ms ease;
-    }
-
-    .add-button:hover { transform: translateY(-1px); box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 32%, transparent); }
-    .add-button:active { transform: translateY(1px) scale(.97); }
-    .add-button:focus-visible, .delete-button:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 60%, transparent); outline-offset: 2px; }
-
-    .list-heading {
-      margin-bottom: 8px;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-
-    .count {
-      color: var(--ink);
-      font-variant-numeric: tabular-nums;
-    }
-
-    .tasks {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-      border-top: 1px solid var(--line);
-    }
-
-    .task {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-height: 64px;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--line);
-      animation: task-in 360ms cubic-bezier(.22, 1, .36, 1) both;
-    }
-
-    .check {
-      position: relative;
+    .topbar-inner { min-height: 74px; justify-content: space-between; gap: 20px; }
+    .brand { gap: 11px; color: var(--paper); font-weight: 800; letter-spacing: -.02em; }
+    .brand-mark {
       display: grid;
-      flex: 0 0 22px;
-      width: 22px;
-      height: 22px;
+      width: 34px;
+      height: 34px;
       place-items: center;
-      border: 1.5px solid var(--muted);
-      border-radius: 7px;
+      color: var(--night);
+      background: var(--lime);
+      border-radius: 50%;
+      font-weight: 900;
+    }
+    .top-actions { gap: 14px; }
+    .streak { color: var(--lime); font-size: 14px; font-weight: 750; }
+    .reset-button {
+      padding: 7px 0;
+      color: #b8c8bf;
       background: transparent;
-      transition: background 200ms ease, border-color 200ms ease, transform 200ms ease;
-    }
-
-    .check:hover { border-color: var(--ink); transform: scale(1.06); }
-    .check::after {
-      content: "";
-      width: 10px;
-      height: 6px;
-      border-bottom: 2px solid var(--accent-ink);
-      border-left: 2px solid var(--accent-ink);
-      transform: rotate(-45deg) scale(0);
-      transition: transform 180ms cubic-bezier(.34, 1.56, .64, 1);
-    }
-
-    .task.done .check { border-color: var(--accent); background: var(--accent); }
-    .task.done .check::after { transform: rotate(-45deg) scale(1); }
-
-    .task-label {
-      min-width: 0;
-      flex: 1;
-      overflow-wrap: anywhere;
-      transition: color 200ms ease, opacity 200ms ease;
-    }
-
-    .task.done .task-label { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 1.5px; text-decoration-color: var(--muted); }
-
-    .delete-button {
-      flex: 0 0 30px;
-      width: 30px;
-      height: 30px;
-      border-radius: 8px;
-      color: var(--muted);
-      background: transparent;
-      opacity: 0;
-      font-size: 19px;
-      line-height: 1;
-      transition: opacity 160ms ease, color 160ms ease, background 160ms ease;
-    }
-
-    .task:hover .delete-button, .delete-button:focus-visible { opacity: 1; }
-    .delete-button:hover { color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, transparent); }
-
-    .empty {
-      padding: 30px 0 26px;
-      color: var(--muted);
-      text-align: center;
-    }
-
-    .empty strong { display: block; margin-bottom: 4px; color: var(--ink); }
-
-    .footer {
-      margin-top: 18px;
-      gap: 12px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .clear-button {
-      padding: 5px 0;
-      color: inherit;
-      background: transparent;
+      font-size: 13px;
       text-decoration: underline;
-      text-decoration-color: var(--line);
       text-underline-offset: 3px;
     }
+    .reset-button:hover { color: var(--paper); }
 
-    .clear-button:hover { color: var(--danger); text-decoration-color: currentColor; }
-    .clear-button:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 60%, transparent); outline-offset: 3px; border-radius: 4px; }
-
-    @keyframes settle-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
-    @keyframes task-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    main { padding: 46px 0 70px; }
+    .intro { display: grid; grid-template-columns: 1.2fr .8fr; gap: 32px; align-items: end; margin-bottom: 34px; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      max-width: 9ch;
+      margin-bottom: 16px;
+      font-size: clamp(2.8rem, 7vw, 5.7rem);
+      line-height: .91;
+      letter-spacing: -.075em;
     }
-    @media (max-width: 380px) {
-      body { padding-top: 22px; }
-      .topline { margin-bottom: 26px; }
-      h1 { margin-bottom: 22px; }
+    .intro-copy { max-width: 54ch; color: var(--muted); font-size: 17px; }
+    .scoreboard {
+      padding: 20px;
+      color: var(--paper);
+      background: var(--night-2);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .score-label { margin-bottom: 9px; color: #b8c8bf; font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    .score-row { justify-content: space-between; gap: 16px; }
+    .score-number { color: var(--lime); font-size: 36px; font-weight: 850; letter-spacing: -.06em; }
+    .score-caption { color: #d3dfd8; font-size: 13px; text-align: right; }
+
+    .workspace { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 24px; align-items: start; }
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      padding: 18px;
+      background: var(--paper-2);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    .sidebar h2 { margin-bottom: 14px; font-size: 17px; letter-spacing: -.02em; }
+    .sport-list { display: grid; gap: 8px; }
+    .sport-button {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      gap: 10px;
+      padding: 11px;
+      color: var(--ink);
+      background: transparent;
+      border-radius: 11px;
+      text-align: left;
+      transition: background 160ms ease, transform 160ms ease;
+    }
+    .sport-button:hover { background: #eef3e8; transform: translateX(2px); }
+    .sport-button.selected { color: var(--night); background: var(--lime); font-weight: 800; }
+    .sport-icon { width: 25px; font-size: 20px; text-align: center; }
+    .sidebar-note { margin: 20px 3px 1px; color: var(--muted); font-size: 12px; }
+
+    .training { min-width: 0; }
+    .section-head { justify-content: space-between; gap: 12px; margin-bottom: 11px; }
+    .section-head h2 { margin: 0; font-size: 15px; letter-spacing: .1em; text-transform: uppercase; }
+    .level { color: var(--muted); font-size: 13px; font-weight: 700; }
+    .progress-line { gap: 12px; margin-bottom: 20px; }
+    .progress-track { height: 9px; flex: 1; overflow: hidden; background: #e1e7dd; border-radius: 10px; }
+    .progress-value { width: 0%; height: 100%; background: var(--orange); border-radius: inherit; transition: width 300ms ease; }
+    .progress-count { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+
+    .challenge {
+      padding: clamp(22px, 4vw, 36px);
+      background: var(--paper-2);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+    .challenge-head { justify-content: space-between; gap: 16px; margin-bottom: 23px; }
+    .tag { padding: 6px 9px; color: var(--night); background: var(--blue); border-radius: 7px; font-size: 11px; font-weight: 850; letter-spacing: .07em; text-transform: uppercase; }
+    .challenge-number { color: var(--muted); font-size: 13px; font-weight: 700; }
+    .question { max-width: 34ch; margin-bottom: 23px; font-size: clamp(1.45rem, 3vw, 2.15rem); line-height: 1.12; letter-spacing: -.04em; }
+    .data-strip { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 27px; }
+    .data-chip { padding: 8px 11px; color: var(--ink); background: #eef3e8; border-radius: 8px; font-size: 13px; font-weight: 750; }
+    .method-label { display: block; margin-bottom: 9px; color: var(--muted); font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .methods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
+    .method-button {
+      min-height: 52px;
+      padding: 8px;
+      color: var(--ink);
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      transition: border-color 160ms ease, background 160ms ease;
+    }
+    .method-button:hover { border-color: var(--orange); }
+    .method-button.selected { border-color: var(--night); background: var(--night); color: var(--paper); }
+    .answer-row { display: flex; gap: 9px; }
+    .answer-input {
+      min-width: 0;
+      flex: 1;
+      padding: 13px 14px;
+      color: var(--ink);
+      background: var(--paper-2);
+      border: 1px solid #aebdb1;
+      border-radius: 10px;
+    }
+    .answer-input::placeholder { color: #829188; }
+    .primary-button {
+      padding: 12px 18px;
+      color: var(--night);
+      background: var(--lime);
+      border-radius: 10px;
+      font-weight: 850;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+    .primary-button:hover { transform: translateY(-2px); box-shadow: 0 7px 15px rgba(214, 242, 107, .35); }
+    .hint-button {
+      margin-top: 13px;
+      padding: 4px 0;
+      color: var(--muted);
+      background: transparent;
+      font-size: 13px;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .hint-button:hover { color: var(--ink); }
+    .hint { margin: 11px 0 0; padding: 11px 13px; color: var(--ink); background: #fff4d6; border-radius: 9px; font-size: 14px; }
+    .feedback { margin-top: 22px; padding: 16px; border-radius: 12px; }
+    .feedback.correct { color: #155d3c; background: #e2f3e8; }
+    .feedback.incorrect { color: #783333; background: #fce9e5; }
+    .feedback-title { gap: 8px; margin-bottom: 5px; font-weight: 850; }
+    .feedback p { margin-bottom: 11px; font-size: 14px; }
+    .next-button { padding: 8px 12px; color: inherit; background: transparent; border: 1px solid currentColor; border-radius: 8px; font-size: 13px; font-weight: 800; }
+    .next-button:hover { background: rgba(255,255,255,.38); }
+    .coach-note { margin-top: 20px; padding-top: 15px; color: var(--muted); border-top: 1px solid var(--line); font-size: 13px; }
+    .coach-note strong { color: var(--ink); }
+    .complete {
+      padding: 34px 22px;
+      text-align: center;
+      background: var(--night);
+      color: var(--paper);
+      border-radius: 20px;
+    }
+    .complete h2 { margin-bottom: 8px; color: var(--lime); font-size: 31px; letter-spacing: -.05em; }
+    .complete p { max-width: 40ch; margin: 0 auto 20px; color: #c9d7cf; }
+    .complete .method-summary { max-width: 52ch; margin: 0 auto 20px; color: var(--lime); font-size: 13px; }
+    .complete .method-summary strong { color: var(--paper); }
+    .secondary-button { padding: 10px 14px; color: var(--paper); background: transparent; border: 1px solid #739183; border-radius: 9px; font-weight: 750; }
+    .secondary-button:hover { border-color: var(--lime); color: var(--lime); }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+    [hidden] { display: none !important; }
+
+    @media (max-width: 760px) {
+      .intro { grid-template-columns: 1fr; gap: 20px; }
+      h1 { max-width: 11ch; }
+      .workspace { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .sport-list { grid-template-columns: repeat(3, 1fr); }
+      .sport-button { display: grid; justify-items: center; padding: 9px 4px; text-align: center; }
+      .sidebar-note { display: none; }
+    }
+    @media (max-width: 480px) {
+      .shell { width: min(100% - 22px, 1040px); }
+      main { padding-top: 28px; }
+      .topbar-inner { min-height: 64px; }
+      .reset-button { font-size: 12px; }
+      .streak { display: none; }
+      .methods { grid-template-columns: 1fr; }
+      .answer-row { flex-direction: column; }
+      .primary-button { width: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
     }
   </style>
 </head>
 <body>
-  <main class="app">
-    <div class="topline">
-      <span class="mark"><span class="mark-dot" aria-hidden="true"></span>Small wins</span>
-      <span id="date"></span>
-    </div>
-
-    <h1>Make room for what matters.</h1>
-
-    <form class="composer" id="task-form">
-      <label class="sr-only" for="task-input">Add a task</label>
-      <input id="task-input" type="text" maxlength="120" autocomplete="off" placeholder="What needs doing?" required>
-      <button class="add-button" type="submit" aria-label="Add task">+</button>
-    </form>
-
-    <section aria-labelledby="list-heading">
-      <div class="list-heading">
-        <span id="list-heading">Today</span>
-        <span class="count" id="count" aria-live="polite"></span>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">÷</span><span>Playbook maths</span></div>
+      <div class="top-actions">
+        <span class="streak" id="streak" aria-live="polite">0 day streak</span>
+        <button class="reset-button" id="reset" type="button">Reset progress</button>
       </div>
-      <ul class="tasks" id="tasks"></ul>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="intro" aria-labelledby="page-title">
+      <div>
+        <h1 id="page-title">Train your maths brain.</h1>
+        <p class="intro-copy">Solve real sports decisions, test your method, and learn why the answer works. Your next play is one challenge away.</p>
+      </div>
+      <div class="scoreboard" aria-label="Your season progress">
+        <div class="score-label">Your season</div>
+        <div class="score-row">
+          <span class="score-number" id="score">0 pts</span>
+          <span class="score-caption" id="score-caption">Build your<br>match-day toolkit</span>
+        </div>
+      </div>
     </section>
 
-    <div class="footer">
-      <span id="hint">Stored on this device</span>
-      <button class="clear-button" id="clear-completed" type="button">Clear completed</button>
+    <div class="workspace">
+      <aside class="sidebar" aria-labelledby="sports-title">
+        <h2 id="sports-title">Choose a sport</h2>
+        <div class="sport-list" id="sport-list"></div>
+        <p class="sidebar-note">Every sport uses the same maths in a new situation. That is how skills transfer.</p>
+      </aside>
+
+      <section class="training" aria-labelledby="training-title">
+        <div class="section-head">
+          <h2 id="training-title">Today's training</h2>
+          <span class="level" id="level">Rookie</span>
+        </div>
+        <div class="progress-line">
+          <div class="progress-track" aria-hidden="true"><div class="progress-value" id="progress-value"></div></div>
+          <span class="progress-count" id="progress-count">0 / 3</span>
+        </div>
+
+        <div id="challenge-view"></div>
+      </section>
     </div>
   </main>
 
   <script>
-    const STORAGE_KEY = "small-wins-tasks";
-    const examples = [
-      { id: "welcome-1", text: "Choose one thing to focus on", done: false },
-      { id: "welcome-2", text: "Make a little progress", done: false },
-      { id: "welcome-3", text: "Leave tomorrow a clean start", done: true }
+    const STORAGE_KEY = "playbook-maths-progress";
+    const SPORTS = [
+      { id: "soccer", name: "Soccer", icon: "⚽" },
+      { id: "basketball", name: "Basketball", icon: "🏀" },
+      { id: "track", name: "Track", icon: "🏃" }
     ];
+    const CHALLENGES = [
+      {
+        id: "soccer-1", sport: "soccer", tag: "Proportions", prompt: "Your team completed 8 of 20 passes. What percentage of the passes were completed?",
+        chips: ["8 completed", "20 total", "Find a percentage"], answer: 40, unit: "%", method: "part-whole",
+        hint: "A percentage compares the part to the whole. Divide completed passes by total passes, then multiply by 100.",
+        explanation: "8 ÷ 20 = 0.4. Then 0.4 × 100 = 40%, so the team completed 40% of its passes."
+      },
+      {
+        id: "soccer-2", sport: "soccer", tag: "Game plan", prompt: "A striker scores 3 goals for every 5 shots. At the same rate, how many goals can you expect from 20 shots?",
+        chips: ["3 goals", "5 shots", "20 shots"], answer: 12, unit: "goals", method: "scale-up",
+        hint: "Ask: how many groups of 5 shots fit into 20 shots? Scale the goals by the same amount.",
+        explanation: "20 ÷ 5 = 4 groups. Scale 3 goals by 4: 3 × 4 = 12 goals."
+      },
+      {
+        id: "basketball-1", sport: "basketball", tag: "Percentages", prompt: "A player made 18 out of 24 free throws. What was their free-throw percentage?",
+        chips: ["18 made", "24 attempts", "Find a percentage"], answer: 75, unit: "%", method: "part-whole",
+        hint: "Use made shots ÷ attempts. Look for a decimal you can turn into a percentage.",
+        explanation: "18 ÷ 24 = 0.75. Multiply by 100 and the free-throw percentage is 75%."
+      },
+      {
+        id: "basketball-2", sport: "basketball", tag: "Ratios", prompt: "Your team scores 2 points for every 3 rebounds. If you collect 15 rebounds, how many points does that ratio predict?",
+        chips: ["2 points", "3 rebounds", "15 rebounds"], answer: 10, unit: "points", method: "scale-up",
+        hint: "15 rebounds is 5 groups of 3. Multiply the points by those same 5 groups.",
+        explanation: "15 ÷ 3 = 5 groups. 2 points × 5 = 10 points."
+      },
+      {
+        id: "track-1", sport: "track", tag: "Percentages", prompt: "A runner improves a 12-minute time by 25%. How many minutes is the improvement?",
+        chips: ["12 minutes", "25% improvement", "Find the change"], answer: 3, unit: "minutes", method: "fraction-percent",
+        hint: "25% is the same as one quarter. Find one quarter of 12.",
+        explanation: "25% = 1/4. One quarter of 12 minutes is 12 ÷ 4 = 3 minutes."
+      },
+      {
+        id: "track-2", sport: "track", tag: "Compare", prompt: "Lane A takes 48 seconds and Lane B takes 60 seconds. How much faster is Lane A as a percentage of Lane B's time?",
+        chips: ["48 seconds", "60 seconds", "Compare the difference"], answer: 20, unit: "%", method: "difference-percent",
+        hint: "First find the difference. Then compare that difference to Lane B's time.",
+        explanation: "60 − 48 = 12 seconds. 12 ÷ 60 = 0.2, which is 20%, so Lane A is 20% faster."
+      }
+    ];
+    const METHODS = [
+      { id: "part-whole", label: "Part ÷ whole" },
+      { id: "scale-up", label: "Scale the ratio" },
+      { id: "fraction-percent", label: "Use a fraction" },
+      { id: "difference-percent", label: "Compare change" }
+    ];
+    const defaultProgress = { sport: "soccer", completed: [], attempts: 0, correct: 0, streak: 0, lastPlayed: "", methods: {} };
+    let progress = loadProgress();
+    let current = null;
+    let selectedMethod = "";
+    let hintOpen = false;
 
-    const form = document.querySelector("#task-form");
-    const input = document.querySelector("#task-input");
-    const list = document.querySelector("#tasks");
-    const count = document.querySelector("#count");
-    const clearButton = document.querySelector("#clear-completed");
-    const date = document.querySelector("#date");
-    let tasks = loadTasks();
+    const sportList = document.querySelector("#sport-list");
+    const challengeView = document.querySelector("#challenge-view");
+    const progressValue = document.querySelector("#progress-value");
+    const progressCount = document.querySelector("#progress-count");
+    const score = document.querySelector("#score");
+    const scoreCaption = document.querySelector("#score-caption");
+    const level = document.querySelector("#level");
+    const streak = document.querySelector("#streak");
 
-    date.textContent = new Intl.DateTimeFormat(undefined, { weekday: "short", month: "short", day: "numeric" }).format(new Date());
-
-    function loadTasks() {
+    function loadProgress() {
       try {
-        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-        return Array.isArray(saved) ? saved.filter(task => task && typeof task.text === "string") : examples;
-      } catch {
-        return examples;
+        const value = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (!value || !Array.isArray(value.completed)) return { ...defaultProgress };
+        const methods = {};
+        Object.entries(value.methods || {}).forEach(([id, result]) => {
+          methods[id] = typeof result === "number" ? { attempts: result, correct: result } : result;
+        });
+        return { ...defaultProgress, ...value, methods };
+      } catch (error) {
+        return { ...defaultProgress };
       }
     }
-
-    function saveTasks() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    function saveProgress() { localStorage.setItem(STORAGE_KEY, JSON.stringify(progress)); }
+    function sportChallenges() { return CHALLENGES.filter(challenge => challenge.sport === progress.sport); }
+    function currentIndex() {
+      const available = sportChallenges();
+      const open = available.findIndex(challenge => !progress.completed.includes(challenge.id));
+      return open === -1 ? 0 : open;
     }
-
+    function renderSports() {
+      sportList.innerHTML = SPORTS.map(sport => `
+        <button class="sport-button${sport.id === progress.sport ? " selected" : ""}" type="button" data-sport="${sport.id}" aria-pressed="${sport.id === progress.sport}">
+          <span class="sport-icon" aria-hidden="true">${sport.icon}</span><span>${sport.name}</span>
+        </button>`).join("");
+      sportList.querySelectorAll("[data-sport]").forEach(button => button.addEventListener("click", () => {
+        progress.sport = button.dataset.sport;
+        saveProgress();
+        current = null;
+        render();
+      }));
+    }
+    function renderStats() {
+      const available = sportChallenges();
+      const done = available.filter(challenge => progress.completed.includes(challenge.id)).length;
+      const total = CHALLENGES.length;
+      const percent = Math.round((progress.completed.length / total) * 100);
+      progressValue.style.width = `${Math.min(percent, 100)}%`;
+      progressCount.textContent = `${done} / ${available.length}`;
+      score.textContent = `${progress.correct * 10} pts`;
+      scoreCaption.innerHTML = progress.correct ? "Keep your<br>thinking sharp" : "Build your<br>match-day toolkit";
+      level.textContent = progress.correct >= 5 ? "Playmaker" : progress.correct >= 2 ? "Starter" : "Rookie";
+      streak.textContent = `${progress.streak} day${progress.streak === 1 ? "" : "s"} streak`;
+    }
     function render() {
-      list.innerHTML = "";
-      const remaining = tasks.filter(task => !task.done).length;
-      count.textContent = `${remaining} ${remaining === 1 ? "left" : "left"}`;
-
-      if (!tasks.length) {
-        list.innerHTML = '<li class="empty"><strong>Nothing here yet.</strong>Add a small win above.</li>';
-        return;
-      }
-
-      tasks.forEach((task, index) => {
-        const item = document.createElement("li");
-        item.className = `task${task.done ? " done" : ""}`;
-        item.style.animationDelay = `${Math.min(index * 45, 180)}ms`;
-        item.innerHTML = `
-          <button class="check" type="button" aria-label="${task.done ? "Mark incomplete" : "Mark complete"}" aria-pressed="${task.done}"></button>
-          <span class="task-label">${escapeHtml(task.text)}</span>
-          <button class="delete-button" type="button" aria-label="Delete task">×</button>
-        `;
-        item.querySelector(".check").addEventListener("click", () => {
-          task.done = !task.done;
-          saveTasks();
+      renderSports();
+      renderStats();
+      if (!current) current = sportChallenges()[currentIndex()];
+      const complete = sportChallenges().every(challenge => progress.completed.includes(challenge.id));
+      challengeView.innerHTML = complete ? renderComplete() : renderChallenge(current);
+      bindChallenge();
+    }
+    function renderComplete() {
+      const methodResults = Object.entries(progress.methods)
+        .filter(([, result]) => result.attempts)
+        .map(([id, result]) => {
+          const method = METHODS.find(item => item.id === id);
+          return `${method ? method.label : id}: ${Math.round((result.correct / result.attempts) * 100)}%`;
+        });
+      const summary = methodResults.length ? `<p class="method-summary"><strong>Method check:</strong> ${methodResults.join(" · ")}</p>` : "";
+      return `<div class="complete"><h2>Training complete!</h2><p>You worked through every ${SPORTS.find(sport => sport.id === progress.sport).name} challenge. Switch sports to transfer your method to a new game.</p>${summary}<button class="secondary-button" id="repeat" type="button">Practice this sport again</button></div>`;
+    }
+    function renderChallenge(challenge) {
+      const position = sportChallenges().findIndex(item => item.id === challenge.id) + 1;
+      return `
+        <article class="challenge" aria-labelledby="question">
+          <div class="challenge-head"><span class="tag">${challenge.tag}</span><span class="challenge-number">Challenge ${position} of ${sportChallenges().length}</span></div>
+          <h3 class="question" id="question">${challenge.prompt}</h3>
+          <div class="data-strip">${challenge.chips.map(chip => `<span class="data-chip">${chip}</span>`).join("")}</div>
+          <span class="method-label">Which method will you try?</span>
+          <div class="methods" role="group" aria-label="Choose a maths method">
+            ${METHODS.map(method => `<button class="method-button${selectedMethod === method.id ? " selected" : ""}" type="button" data-method="${method.id}" aria-pressed="${selectedMethod === method.id}">${method.label}</button>`).join("")}
+          </div>
+          <form class="answer-row" id="answer-form">
+            <label class="sr-only" for="answer">Your answer</label>
+            <input class="answer-input" id="answer" inputmode="decimal" autocomplete="off" placeholder="Type your answer (${challenge.unit})" required>
+            <button class="primary-button" type="submit">Check answer</button>
+          </form>
+          <button class="hint-button" id="hint-button" type="button" aria-expanded="${hintOpen}">${hintOpen ? "Hide hint" : "Need a hint?"}</button>
+          <p class="hint" id="hint" ${hintOpen ? "" : "hidden"}>${challenge.hint}</p>
+          <p class="coach-note"><strong>Coach's note:</strong> A strong solver explains what each number means before calculating.</p>
+          <div id="feedback" aria-live="polite"></div>
+        </article>`;
+    }
+    function bindChallenge() {
+      const repeat = document.querySelector("#repeat");
+      if (repeat) {
+        repeat.addEventListener("click", () => {
+          progress.completed = progress.completed.filter(id => !sportChallenges().some(challenge => challenge.id === id));
+          saveProgress();
+          current = sportChallenges()[0];
+          selectedMethod = "";
           render();
         });
-        item.querySelector(".delete-button").addEventListener("click", () => {
-          item.style.opacity = "0";
-          item.style.transform = "translateX(8px)";
-          setTimeout(() => {
-            tasks = tasks.filter(candidate => candidate.id !== task.id);
-            saveTasks();
-            render();
-          }, 150);
+        return;
+      }
+      document.querySelectorAll("[data-method]").forEach(button => button.addEventListener("click", () => {
+        selectedMethod = button.dataset.method;
+        document.querySelectorAll("[data-method]").forEach(item => {
+          item.classList.toggle("selected", item === button);
+          item.setAttribute("aria-pressed", item === button);
         });
-        list.appendChild(item);
+      }));
+      document.querySelector("#hint-button").addEventListener("click", () => {
+        hintOpen = !hintOpen;
+        const hint = document.querySelector("#hint");
+        hint.hidden = !hintOpen;
+        document.querySelector("#hint-button").textContent = hintOpen ? "Hide hint" : "Need a hint?";
+        document.querySelector("#hint-button").setAttribute("aria-expanded", hintOpen);
+      });
+      document.querySelector("#answer-form").addEventListener("submit", event => {
+        event.preventDefault();
+        checkAnswer();
       });
     }
-
-    function escapeHtml(value) {
-      return value.replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
+    function checkAnswer() {
+      const input = document.querySelector("#answer");
+      const value = Number.parseFloat(input.value.replace(",", "."));
+      const feedback = document.querySelector("#feedback");
+      const correct = Number.isFinite(value) && Math.abs(value - current.answer) < .01;
+      progress.attempts += 1;
+      if (selectedMethod) {
+        const result = progress.methods[selectedMethod] || { attempts: 0, correct: 0 };
+        result.attempts += 1;
+        if (correct) result.correct += 1;
+        progress.methods[selectedMethod] = result;
+      }
+      if (correct) {
+        progress.correct += 1;
+        if (!progress.completed.includes(current.id)) progress.completed.push(current.id);
+        progress.streak += 1;
+        feedback.innerHTML = `<div class="feedback correct"><div class="feedback-title"><span aria-hidden="true">✓</span> Great call.</div><p>${current.explanation}</p>${nextButtonMarkup()}</div>`;
+      } else {
+        feedback.innerHTML = `<div class="feedback incorrect"><div class="feedback-title"><span aria-hidden="true">↺</span> Not quite — keep reasoning.</div><p>Check what the whole number is and try the method again. Here is the coach's breakdown: ${current.explanation}</p>${nextButtonMarkup()}</div>`;
+      }
+      saveProgress();
+      input.disabled = true;
+      document.querySelector(".primary-button").disabled = true;
+      document.querySelectorAll("[data-method]").forEach(button => button.disabled = true);
+      feedback.querySelector(".next-button").addEventListener("click", nextChallenge);
+      renderStats();
     }
-
-    form.addEventListener("submit", event => {
-      event.preventDefault();
-      const text = input.value.trim();
-      if (!text) return;
-      tasks.unshift({ id: `${Date.now()}-${Math.random().toString(16).slice(2)}`, text, done: false });
-      saveTasks();
-      input.value = "";
+    function nextButtonMarkup() {
+      const next = sportChallenges().find(challenge => challenge.id !== current.id && !progress.completed.includes(challenge.id));
+      return `<button class="next-button" type="button">${next ? "Next challenge →" : "Finish training →"}</button>`;
+    }
+    function nextChallenge() {
+      current = sportChallenges().find(challenge => !progress.completed.includes(challenge.id));
+      if (!current) current = sportChallenges()[0];
+      selectedMethod = "";
+      hintOpen = false;
       render();
-      input.focus();
-    });
-
-    clearButton.addEventListener("click", () => {
-      if (!tasks.some(task => task.done)) return;
-      tasks = tasks.filter(task => !task.done);
-      saveTasks();
+    }
+    document.querySelector("#reset").addEventListener("click", () => {
+      if (!window.confirm("Reset all your season progress?")) return;
+      progress = { ...defaultProgress, methods: {} };
+      current = null;
+      selectedMethod = "";
+      saveProgress();
       render();
     });
-
     render();
   </script>
 </body>
