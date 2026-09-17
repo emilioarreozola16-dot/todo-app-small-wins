@@ -130,6 +130,20 @@
     .progress-track { height: 9px; flex: 1; overflow: hidden; background: #e1e7dd; border-radius: 10px; }
     .progress-value { width: 0%; height: 100%; background: var(--orange); border-radius: inherit; transition: width 300ms ease; }
     .progress-count { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+    .play-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .play-step {
+      padding: 11px 12px;
+      background: #eef3e8;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+    .play-step strong { display: block; margin-bottom: 2px; font-size: 13px; }
+    .play-step span { color: var(--muted); }
 
     .challenge {
       padding: clamp(22px, 4vw, 36px);
@@ -159,6 +173,8 @@
     }
     .method-button:hover { border-color: var(--orange); }
     .method-button.selected { border-color: var(--night); background: var(--night); color: var(--paper); }
+    .method-button:disabled { cursor: default; opacity: .65; }
+    .method-help { min-height: 18px; margin: -10px 0 15px; color: var(--muted); font-size: 13px; }
     .answer-row { display: flex; gap: 9px; }
     .answer-input {
       min-width: 0;
@@ -195,6 +211,10 @@
     .feedback.incorrect { color: #783333; background: #fce9e5; }
     .feedback-title { gap: 8px; margin-bottom: 5px; font-weight: 850; }
     .feedback p { margin-bottom: 11px; font-size: 14px; }
+    .feedback .worked-solution { margin-top: 10px; padding: 11px 12px; color: inherit; background: rgba(255,255,255,.5); border-radius: 9px; }
+    .feedback .worked-solution strong { display: block; margin-bottom: 3px; }
+    .solution-button { padding: 0; color: inherit; background: transparent; font-size: 13px; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+    .try-again { margin-right: 12px; }
     .next-button { padding: 8px 12px; color: inherit; background: transparent; border: 1px solid currentColor; border-radius: 8px; font-size: 13px; font-weight: 800; }
     .next-button:hover { background: rgba(255,255,255,.38); }
     .coach-note { margin-top: 20px; padding-top: 15px; color: var(--muted); border-top: 1px solid var(--line); font-size: 13px; }
@@ -231,6 +251,7 @@
       .reset-button { font-size: 12px; }
       .streak { display: none; }
       .methods { grid-template-columns: 1fr; }
+      .play-steps { grid-template-columns: 1fr; }
       .answer-row { flex-direction: column; }
       .primary-button { width: 100%; }
     }
@@ -333,16 +354,17 @@
       }
     ];
     const METHODS = [
-      { id: "part-whole", label: "Part ÷ whole" },
-      { id: "scale-up", label: "Scale the ratio" },
-      { id: "fraction-percent", label: "Use a fraction" },
-      { id: "difference-percent", label: "Compare change" }
+      { id: "part-whole", label: "Part ÷ whole", help: "Compare the part with the total." },
+      { id: "scale-up", label: "Scale the ratio", help: "Make equal groups bigger or smaller." },
+      { id: "fraction-percent", label: "Use a fraction", help: "Turn a familiar fraction into a percent." },
+      { id: "difference-percent", label: "Compare change", help: "Find the difference, then compare it." }
     ];
     const defaultProgress = { sport: "soccer", completed: [], attempts: 0, correct: 0, streak: 0, lastPlayed: "", methods: {} };
     let progress = loadProgress();
     let current = null;
     let selectedMethod = "";
     let hintOpen = false;
+    let solutionOpen = false;
 
     const sportList = document.querySelector("#sport-list");
     const challengeView = document.querySelector("#challenge-view");
@@ -422,10 +444,16 @@
           <div class="challenge-head"><span class="tag">${challenge.tag}</span><span class="challenge-number">Challenge ${position} of ${sportChallenges().length}</span></div>
           <h3 class="question" id="question">${challenge.prompt}</h3>
           <div class="data-strip">${challenge.chips.map(chip => `<span class="data-chip">${chip}</span>`).join("")}</div>
+          <div class="play-steps" aria-label="Three steps for solving">
+            <div class="play-step"><strong>1. Spot it</strong><span>What do the numbers mean?</span></div>
+            <div class="play-step"><strong>2. Plan it</strong><span>Pick a useful method.</span></div>
+            <div class="play-step"><strong>3. Check it</strong><span>Does your answer make sense?</span></div>
+          </div>
           <span class="method-label">Which method will you try?</span>
           <div class="methods" role="group" aria-label="Choose a maths method">
             ${METHODS.map(method => `<button class="method-button${selectedMethod === method.id ? " selected" : ""}" type="button" data-method="${method.id}" aria-pressed="${selectedMethod === method.id}">${method.label}</button>`).join("")}
           </div>
+          <p class="method-help" id="method-help">${selectedMethod ? METHODS.find(method => method.id === selectedMethod).help : "Choose a method to see how it helps."}</p>
           <form class="answer-row" id="answer-form">
             <label class="sr-only" for="answer">Your answer</label>
             <input class="answer-input" id="answer" inputmode="decimal" autocomplete="off" placeholder="Type your answer (${challenge.unit})" required>
@@ -455,6 +483,7 @@
           item.classList.toggle("selected", item === button);
           item.setAttribute("aria-pressed", item === button);
         });
+        document.querySelector("#method-help").textContent = METHODS.find(method => method.id === selectedMethod).help;
       }));
       document.querySelector("#hint-button").addEventListener("click", () => {
         hintOpen = !hintOpen;
@@ -486,13 +515,24 @@
         progress.streak += 1;
         feedback.innerHTML = `<div class="feedback correct"><div class="feedback-title"><span aria-hidden="true">✓</span> Great call.</div><p>${current.explanation}</p>${nextButtonMarkup()}</div>`;
       } else {
-        feedback.innerHTML = `<div class="feedback incorrect"><div class="feedback-title"><span aria-hidden="true">↺</span> Not quite — keep reasoning.</div><p>Check what the whole number is and try the method again. Here is the coach's breakdown: ${current.explanation}</p>${nextButtonMarkup()}</div>`;
+        feedback.innerHTML = `<div class="feedback incorrect"><div class="feedback-title"><span aria-hidden="true">↺</span> Good attempt — now coach your thinking.</div><p>Check what the whole number is, then try again. You can change your method if another plan fits better.</p><button class="solution-button" id="solution-button" type="button" aria-expanded="${solutionOpen}">${solutionOpen ? "Hide worked solution" : "Show worked solution"}</button><div class="worked-solution" ${solutionOpen ? "" : "hidden"}><strong>Worked solution</strong>${current.explanation}</div></div>`;
       }
       saveProgress();
-      input.disabled = true;
-      document.querySelector(".primary-button").disabled = true;
-      document.querySelectorAll("[data-method]").forEach(button => button.disabled = true);
-      feedback.querySelector(".next-button").addEventListener("click", nextChallenge);
+      if (correct) {
+        input.disabled = true;
+        document.querySelector(".primary-button").disabled = true;
+        document.querySelectorAll("[data-method]").forEach(button => button.disabled = true);
+        feedback.querySelector(".next-button").addEventListener("click", nextChallenge);
+      } else {
+        input.value = "";
+        input.focus();
+        document.querySelector("#solution-button").addEventListener("click", () => {
+          solutionOpen = !solutionOpen;
+          document.querySelector("#solution-button").textContent = solutionOpen ? "Hide worked solution" : "Show worked solution";
+          document.querySelector("#solution-button").setAttribute("aria-expanded", solutionOpen);
+          document.querySelector(".worked-solution").hidden = !solutionOpen;
+        });
+      }
       renderStats();
     }
     function nextButtonMarkup() {
@@ -504,6 +544,7 @@
       if (!current) current = sportChallenges()[0];
       selectedMethod = "";
       hintOpen = false;
+      solutionOpen = false;
       render();
     }
     document.querySelector("#reset").addEventListener("click", () => {
