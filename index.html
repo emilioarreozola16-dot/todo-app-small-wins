@@ -155,139 +155,61 @@
       border-radius: 22px;
       box-shadow: var(--shadow);
     }
-    .challenge-head { justify-content: space-between; gap: 16px; margin-bottom: 23px; }
+    .challenge-head { justify-content: space-between; gap: 12px; margin-bottom: 23px; flex-wrap: wrap; }
     .tag { padding: 6px 9px; color: var(--night); background: var(--blue); border-radius: 7px; font-size: 11px; font-weight: 850; letter-spacing: .07em; text-transform: uppercase; }
-    .challenge-number { color: var(--muted); font-size: 13px; font-weight: 700; }
+    .challenge-number { min-width: 0; color: var(--muted); font-size: 13px; font-weight: 700; }
     .sport-scene {
       position: relative;
       width: 100%;
       max-width: 100%;
-      height: 122px;
+      min-height: 144px;
       margin: -4px 0 25px;
       overflow: hidden;
       border-radius: 14px;
-      background: var(--night);
-      isolation: isolate;
+      background: #eef3e8;
+      border: 1px solid var(--line);
     }
-    .scene-label {
-      position: absolute;
-      z-index: 3;
-      top: 13px;
-      left: 15px;
-      color: var(--paper);
-      font-size: 11px;
-      font-weight: 850;
-      letter-spacing: .1em;
+    .diagram {
+      display: block;
+      width: 100%;
+      height: 144px;
+    }
+    .diagram text {
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-weight: 800;
+    }
+    .diagram-title {
+      fill: var(--ink);
+      font-size: 13px;
+      letter-spacing: .04em;
       text-transform: uppercase;
     }
-    .scene-sun {
-      position: absolute;
-      top: 18px;
-      right: 24px;
-      width: 42px;
-      height: 42px;
-      border: 5px solid var(--lime);
-      border-radius: 50%;
-      opacity: .85;
+    .diagram-number {
+      fill: var(--night);
+      font-size: 22px;
     }
-    .scene-ground {
-      position: absolute;
-      right: 0;
-      bottom: -38px;
-      left: 0;
-      height: 78px;
-      background: #24533e;
-      border-top: 2px solid #5a9a6c;
-      box-shadow: 0 -8px 18px rgba(0,0,0,.15), inset 0 10px 0 rgba(255,255,255,.04);
+    .diagram-note {
+      fill: var(--muted);
+      font-size: 11px;
     }
-    .scene-ball {
-      position: absolute;
-      z-index: 2;
-      display: grid;
-      width: 38px;
-      height: 38px;
-      place-items: center;
-      font-size: 30px;
-      line-height: 1;
-      text-shadow: 0 5px 4px rgba(0,0,0,.3);
+    .diagram-line {
+      stroke: var(--ink);
+      stroke-width: 3;
+      stroke-linecap: round;
     }
-    .soccer-scene .scene-ball { bottom: 22px; left: 14%; animation: soccer-roll 3.5s ease-in-out infinite; }
-    .soccer-scene .scene-ground::after {
-      content: "";
-      position: absolute;
-      right: 15%;
-      bottom: 30px;
-      width: 54px;
-      height: 39px;
-      border: 3px solid #dbe9d5;
-      border-bottom: 0;
-      opacity: .85;
+    .diagram-box {
+      fill: var(--paper-2);
+      stroke: var(--line);
+      stroke-width: 1;
     }
-    .basketball-scene .scene-ball { bottom: 19px; left: 16%; animation: basketball-bounce 2.2s cubic-bezier(.4, 0, .6, 1) infinite; }
-    .basketball-hoop {
-      position: absolute;
-      z-index: 2;
-      right: 17%;
-      bottom: 27px;
-      width: 36px;
-      height: 25px;
-      border: 4px solid var(--orange);
-      border-top: 0;
-      border-radius: 0 0 20px 20px;
-      box-shadow: 0 5px 4px rgba(0,0,0,.25);
-    }
-    .basketball-hoop::after {
-      content: "";
-      position: absolute;
-      top: 1px;
-      left: 1px;
-      width: 26px;
-      height: 23px;
-      border: 1px dashed rgba(255,255,255,.8);
-      border-top: 0;
-      border-radius: 0 0 12px 12px;
-    }
-    .basketball-hoop::before {
-      content: "";
-      position: absolute;
-      bottom: 18px;
-      left: 12px;
-      width: 4px;
-      height: 55px;
-      background: #dbe9d5;
-    }
-    .track-scene .scene-ground { bottom: -21px; height: 54px; background: repeating-linear-gradient(170deg, #d35e4f 0 8px, #eb7d5c 8px 13px, #d35e4f 13px 21px); border: 0; }
-    .track-lane {
-      position: absolute;
-      z-index: 2;
-      bottom: 26px;
-      left: 12%;
-      width: 72%;
-      border-top: 3px dashed #ffe6bd;
-      transform: rotate(-7deg);
-    }
-    .runner {
-      position: absolute;
-      z-index: 3;
-      bottom: 25px;
-      left: 16%;
-      font-size: 38px;
-      animation: runner-stride 2.3s ease-in-out infinite;
-      text-shadow: 0 7px 5px rgba(0,0,0,.25);
-    }
-    @keyframes soccer-roll {
-      0%, 100% { left: 10%; transform: rotate(0); }
-      50% { left: calc(100% - 48px); transform: rotate(360deg); }
-    }
-    @keyframes basketball-bounce {
-      0%, 100% { left: 10%; bottom: 19px; transform: scale(1); }
-      42% { left: 57%; bottom: 73px; transform: scale(.92); }
-      58% { left: calc(83% - 38px); bottom: 28px; transform: scale(1); }
-      70% { left: calc(83% - 38px); bottom: 19px; transform: scale(1); }
-    }
-    @keyframes runner-stride {
-      0%, 100% { left: 10%; transform: rotate(-4deg); }
-      50% { left: calc(100% - 48px); transform: rotate(4deg); }
+    .diagram-accent { fill: var(--lime); }
+    .diagram-orange { fill: var(--orange); }
+    .diagram-blue { fill: var(--blue); }
+    .diagram-muted { fill: #dbe6dc; }
+    .diagram-badge {
+      fill: var(--night);
+      font-size: 11px;
+      letter-spacing: .06em;
     }
     .question { max-width: 34ch; margin-bottom: 23px; font-size: clamp(1.45rem, 3vw, 2.15rem); line-height: 1.12; letter-spacing: -.04em; }
     .data-strip { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 27px; }
@@ -388,14 +310,9 @@
       .play-steps { grid-template-columns: 1fr; }
       .answer-row { flex-direction: column; }
       .primary-button { width: 100%; }
-      .soccer-scene .scene-ball { animation-name: soccer-roll; }
-      .runner { animation-name: runner-stride; }
     }
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation: none !important; }
-      .soccer-scene .scene-ball { left: 10%; transform: none; }
-      .basketball-scene .scene-ball { left: 10%; bottom: 19px; transform: none; }
-      .runner { left: 10%; transform: none; }
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
     }
   </style>
 </head>
@@ -591,20 +508,50 @@
     }
     function renderSportScene() {
       if (progress.sport === "basketball") {
-        return `<div class="sport-scene basketball-scene" aria-label="Animated basketball bouncing toward a hoop">
-          <span class="scene-label">Court vision</span><span class="scene-sun" aria-hidden="true"></span>
-          <span class="scene-ball" aria-hidden="true">🏀</span><span class="basketball-hoop" aria-hidden="true"></span><span class="scene-ground" aria-hidden="true"></span>
+        return `<div class="sport-scene" aria-label="Practical basketball diagram showing 24 points split into four equal groups">
+          <svg class="diagram" viewBox="0 0 640 144" role="img" aria-labelledby="basketball-diagram-title">
+            <title id="basketball-diagram-title">Three quarters of 24 points equals 18 points</title>
+            <text x="24" y="27" class="diagram-title">BASKETBALL · SPLIT THE WHOLE</text>
+            <rect x="24" y="47" width="198" height="59" rx="12" class="diagram-box"/>
+            <text x="45" y="72" class="diagram-note">TOTAL SCORE</text><text x="45" y="96" class="diagram-number">24 points</text>
+            <path d="M238 77 H278" class="diagram-line"/><path d="M268 67 L278 77 268 87" fill="none" class="diagram-line"/>
+            <g transform="translate(300 47)">
+              <rect x="0" y="0" width="66" height="59" rx="10" class="diagram-accent"/>
+              <rect x="74" y="0" width="66" height="59" rx="10" class="diagram-accent"/>
+              <rect x="148" y="0" width="66" height="59" rx="10" class="diagram-accent"/>
+              <rect x="222" y="0" width="66" height="59" rx="10" class="diagram-muted"/>
+              <text x="20" y="35" class="diagram-number">6</text><text x="94" y="35" class="diagram-number">6</text><text x="168" y="35" class="diagram-number">6</text><text x="242" y="35" class="diagram-number">6</text>
+            </g>
+            <text x="302" y="128" class="diagram-badge">3 groups × 6 = 18</text>
+          </svg>
         </div>`;
       }
       if (progress.sport === "track") {
-        return `<div class="sport-scene track-scene" aria-label="Animated runner moving along a track">
-          <span class="scene-label">Find your pace</span><span class="scene-sun" aria-hidden="true"></span>
-          <span class="runner" aria-hidden="true">🏃</span><span class="track-lane" aria-hidden="true"></span><span class="scene-ground" aria-hidden="true"></span>
+        return `<div class="sport-scene" aria-label="Practical track diagram showing 25 percent as one quarter of 12 minutes">
+          <svg class="diagram" viewBox="0 0 640 144" role="img" aria-labelledby="track-diagram-title">
+            <title id="track-diagram-title">One quarter of 12 minutes equals 3 minutes</title>
+            <text x="24" y="27" class="diagram-title">TRACK · FIND ONE QUARTER</text>
+            <rect x="24" y="51" width="472" height="30" rx="15" class="diagram-muted"/>
+            <rect x="24" y="51" width="118" height="30" rx="15" class="diagram-orange"/>
+            <path d="M142 45 V91" class="diagram-line"/>
+            <text x="24" y="111" class="diagram-number">3 min</text><text x="204" y="111" class="diagram-note">+ 3</text><text x="292" y="111" class="diagram-note">+ 3</text><text x="380" y="111" class="diagram-note">+ 3</text>
+            <text x="510" y="71" class="diagram-number">12 min</text><text x="510" y="91" class="diagram-note">whole</text>
+            <text x="24" y="128" class="diagram-badge">25% = 1 of 4 equal parts</text>
+          </svg>
         </div>`;
       }
-      return `<div class="sport-scene soccer-scene" aria-label="Animated soccer ball rolling across a field">
-        <span class="scene-label">Read the field</span><span class="scene-sun" aria-hidden="true"></span>
-        <span class="scene-ball" aria-hidden="true">⚽</span><span class="scene-ground" aria-hidden="true"></span>
+      return `<div class="sport-scene" aria-label="Practical soccer diagram showing 8 completed passes out of 20">
+        <svg class="diagram" viewBox="0 0 640 144" role="img" aria-labelledby="soccer-diagram-title">
+          <title id="soccer-diagram-title">8 completed passes out of 20 equals 40 percent</title>
+          <text x="24" y="27" class="diagram-title">SOCCER · PART OF THE WHOLE</text>
+          <g transform="translate(24 50)">
+            <rect x="0" y="0" width="28" height="28" rx="6" class="diagram-accent"/><rect x="34" y="0" width="28" height="28" rx="6" class="diagram-accent"/><rect x="68" y="0" width="28" height="28" rx="6" class="diagram-accent"/><rect x="102" y="0" width="28" height="28" rx="6" class="diagram-accent"/><rect x="136" y="0" width="28" height="28" rx="6" class="diagram-accent"/><rect x="170" y="0" width="28" height="28" rx="6" class="diagram-accent"/><rect x="204" y="0" width="28" height="28" rx="6" class="diagram-accent"/><rect x="238" y="0" width="28" height="28" rx="6" class="diagram-accent"/>
+            <rect x="272" y="0" width="28" height="28" rx="6" class="diagram-muted"/><rect x="306" y="0" width="28" height="28" rx="6" class="diagram-muted"/><rect x="340" y="0" width="28" height="28" rx="6" class="diagram-muted"/><rect x="374" y="0" width="28" height="28" rx="6" class="diagram-muted"/>
+          </g>
+          <text x="24" y="101" class="diagram-number">8</text><text x="49" y="101" class="diagram-note">completed</text><text x="177" y="101" class="diagram-number">/ 20</text><text x="234" y="101" class="diagram-note">total passes</text>
+          <path d="M400 64 H450" class="diagram-line"/><path d="M440 54 L450 64 440 74" fill="none" class="diagram-line"/>
+          <text x="480" y="72" class="diagram-number">40%</text><text x="480" y="92" class="diagram-note">success rate</text>
+        </svg>
       </div>`;
     }
     function renderChallenge(challenge) {
