@@ -24,7 +24,7 @@
     }
 
     * { box-sizing: border-box; }
-    html { min-width: 320px; }
+    html { min-width: 0; }
     body {
       margin: 0;
       min-height: 100vh;
@@ -32,6 +32,7 @@
       background: var(--paper);
       font: 16px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
     button, input { font: inherit; }
@@ -98,6 +99,7 @@
     .sidebar {
       position: sticky;
       top: 20px;
+      min-width: 0;
       padding: 18px;
       background: var(--paper-2);
       border: 1px solid var(--line);
@@ -108,6 +110,7 @@
     .sport-button {
       display: flex;
       width: 100%;
+      min-width: 0;
       align-items: center;
       gap: 10px;
       padding: 11px;
@@ -122,7 +125,7 @@
     .sport-icon { width: 25px; font-size: 20px; text-align: center; }
     .sidebar-note { margin: 20px 3px 1px; color: var(--muted); font-size: 12px; }
 
-    .training { min-width: 0; }
+    .training, .section-head, .progress-line { min-width: 0; }
     .section-head { justify-content: space-between; gap: 12px; margin-bottom: 11px; }
     .section-head h2 { margin: 0; font-size: 15px; letter-spacing: .1em; text-transform: uppercase; }
     .level { color: var(--muted); font-size: 13px; font-weight: 700; }
@@ -165,6 +168,8 @@
       border-radius: 14px;
       background: var(--night);
       isolation: isolate;
+      perspective: 560px;
+      perspective-origin: 50% 62%;
     }
     .scene-label {
       position: absolute;
@@ -195,6 +200,9 @@
       height: 78px;
       background: #24533e;
       border-top: 2px solid #5a9a6c;
+      transform: rotateX(58deg) translateZ(-12px) scale(1.08);
+      transform-origin: 50% 0;
+      box-shadow: 0 -8px 18px rgba(0,0,0,.15), inset 0 10px 0 rgba(255,255,255,.04);
     }
     .scene-ball {
       position: absolute;
@@ -205,8 +213,10 @@
       place-items: center;
       font-size: 30px;
       line-height: 1;
+      transform-style: preserve-3d;
+      text-shadow: 0 7px 5px rgba(0,0,0,.3);
     }
-    .soccer-scene .scene-ball { bottom: 22px; left: 14%; animation: soccer-roll 3.5s ease-in-out infinite; filter: drop-shadow(0 5px 3px rgba(0,0,0,.25)); }
+    .soccer-scene .scene-ball { bottom: 22px; left: 14%; animation: soccer-roll 3.5s ease-in-out infinite; }
     .soccer-scene .scene-ground::after {
       content: "";
       position: absolute;
@@ -218,7 +228,7 @@
       border-bottom: 0;
       opacity: .85;
     }
-    .basketball-scene .scene-ball { bottom: 19px; left: 16%; animation: basketball-bounce 2.2s cubic-bezier(.4, 0, .6, 1) infinite; filter: drop-shadow(0 5px 3px rgba(0,0,0,.25)); }
+    .basketball-scene .scene-ball { bottom: 19px; left: 16%; animation: basketball-bounce 2.2s cubic-bezier(.4, 0, .6, 1) infinite; }
     .basketball-hoop {
       position: absolute;
       z-index: 2;
@@ -229,6 +239,8 @@
       border: 4px solid var(--orange);
       border-top: 0;
       border-radius: 0 0 20px 20px;
+      transform: translateZ(14px);
+      box-shadow: 0 5px 4px rgba(0,0,0,.25);
     }
     .basketball-hoop::after {
       content: "";
@@ -267,22 +279,23 @@
       left: 16%;
       font-size: 38px;
       animation: runner-stride 2.3s ease-in-out infinite;
-      filter: drop-shadow(0 5px 3px rgba(0,0,0,.2));
+      transform-style: preserve-3d;
+      text-shadow: 0 7px 5px rgba(0,0,0,.25);
     }
     @keyframes soccer-roll {
-      0% { left: 10%; transform: rotate(0); }
-      50% { left: calc(100% - 48px); transform: rotate(360deg); }
-      100% { left: 10%; transform: rotate(720deg); }
+      0% { left: 10%; transform: translateZ(4px) scale(.78) rotate(0); }
+      50% { left: calc(100% - 48px); transform: translateZ(32px) scale(1.08) rotate(360deg); }
+      100% { left: 10%; transform: translateZ(4px) scale(.78) rotate(720deg); }
     }
     @keyframes basketball-bounce {
-      0%, 100% { left: 10%; bottom: 19px; transform: scale(1); }
-      42% { left: 57%; bottom: 73px; transform: scale(.88); }
-      58% { left: calc(83% - 38px); bottom: 28px; transform: scale(1.04); }
-      70% { left: calc(83% - 38px); bottom: 19px; transform: scale(1); }
+      0%, 100% { left: 10%; bottom: 19px; transform: translateZ(2px) scale(.76); }
+      42% { left: 57%; bottom: 73px; transform: translateZ(36px) scale(1.02); }
+      58% { left: calc(83% - 38px); bottom: 28px; transform: translateZ(20px) scale(.92); }
+      70% { left: calc(83% - 38px); bottom: 19px; transform: translateZ(4px) scale(.76); }
     }
     @keyframes runner-stride {
-      0%, 100% { left: 10%; transform: rotate(-4deg); }
-      50% { left: calc(100% - 48px); transform: rotate(4deg); }
+      0%, 100% { left: 10%; transform: translateZ(4px) scale(.76) rotate(-4deg); }
+      50% { left: calc(100% - 48px); transform: translateZ(34px) scale(1.04) rotate(4deg); }
     }
     .question { max-width: 34ch; margin-bottom: 23px; font-size: clamp(1.45rem, 3vw, 2.15rem); line-height: 1.12; letter-spacing: -.04em; }
     .data-strip { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 27px; }
@@ -388,9 +401,9 @@
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation: none !important; }
-      .soccer-scene .scene-ball { left: 10%; transform: none; }
-      .basketball-scene .scene-ball { left: 10%; bottom: 19px; transform: none; }
-      .runner { left: 10%; transform: none; }
+      .soccer-scene .scene-ball { left: 10%; transform: translateZ(4px) scale(.78); }
+      .basketball-scene .scene-ball { left: 10%; bottom: 19px; transform: translateZ(2px) scale(.76); }
+      .runner { left: 10%; transform: translateZ(4px) scale(.76); }
     }
   </style>
 </head>
