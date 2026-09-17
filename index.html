@@ -155,6 +155,120 @@
     .challenge-head { justify-content: space-between; gap: 16px; margin-bottom: 23px; }
     .tag { padding: 6px 9px; color: var(--night); background: var(--blue); border-radius: 7px; font-size: 11px; font-weight: 850; letter-spacing: .07em; text-transform: uppercase; }
     .challenge-number { color: var(--muted); font-size: 13px; font-weight: 700; }
+    .sport-scene {
+      position: relative;
+      height: 122px;
+      margin: -4px 0 25px;
+      overflow: hidden;
+      border-radius: 14px;
+      background: var(--night);
+      isolation: isolate;
+    }
+    .scene-label {
+      position: absolute;
+      z-index: 3;
+      top: 13px;
+      left: 15px;
+      color: var(--paper);
+      font-size: 11px;
+      font-weight: 850;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .scene-sun {
+      position: absolute;
+      top: 18px;
+      right: 24px;
+      width: 42px;
+      height: 42px;
+      border: 5px solid var(--lime);
+      border-radius: 50%;
+      opacity: .85;
+    }
+    .scene-ground {
+      position: absolute;
+      right: -8%;
+      bottom: -38px;
+      left: -8%;
+      height: 78px;
+      background: #24533e;
+      border-top: 2px solid #5a9a6c;
+      transform: rotate(-2deg);
+    }
+    .scene-ball {
+      position: absolute;
+      z-index: 2;
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      font-size: 30px;
+      line-height: 1;
+    }
+    .soccer-scene .scene-ball { bottom: 22px; left: 18%; animation: soccer-roll 3.5s ease-in-out infinite; }
+    .soccer-scene .scene-ground::after {
+      content: "";
+      position: absolute;
+      right: 15%;
+      bottom: 30px;
+      width: 54px;
+      height: 39px;
+      border: 3px solid #dbe9d5;
+      border-bottom: 0;
+      opacity: .85;
+    }
+    .basketball-scene .scene-ball { bottom: 19px; left: 24%; animation: basketball-bounce 2.2s cubic-bezier(.4, 0, .6, 1) infinite; }
+    .basketball-hoop {
+      position: absolute;
+      z-index: 2;
+      right: 17%;
+      bottom: 27px;
+      width: 36px;
+      height: 25px;
+      border: 4px solid var(--orange);
+      border-top: 0;
+      border-radius: 0 0 20px 20px;
+    }
+    .basketball-hoop::before {
+      content: "";
+      position: absolute;
+      bottom: 18px;
+      left: 12px;
+      width: 4px;
+      height: 55px;
+      background: #dbe9d5;
+    }
+    .track-scene .scene-ground { bottom: -21px; height: 54px; background: repeating-linear-gradient(170deg, #d35e4f 0 8px, #eb7d5c 8px 13px, #d35e4f 13px 21px); border: 0; }
+    .track-lane {
+      position: absolute;
+      z-index: 2;
+      bottom: 26px;
+      left: 12%;
+      width: 72%;
+      border-top: 3px dashed #ffe6bd;
+      transform: rotate(-7deg);
+    }
+    .runner {
+      position: absolute;
+      z-index: 3;
+      bottom: 25px;
+      left: 30%;
+      font-size: 38px;
+      animation: runner-stride 1.4s ease-in-out infinite;
+    }
+    @keyframes soccer-roll {
+      0%, 100% { transform: translateX(0) rotate(0); }
+      50% { transform: translateX(185px) rotate(360deg); }
+    }
+    @keyframes basketball-bounce {
+      0%, 100% { transform: translate(0, 0); }
+      45% { transform: translate(105px, -57px); }
+      60% { transform: translate(133px, -12px); }
+    }
+    @keyframes runner-stride {
+      0%, 100% { transform: translateX(0) rotate(-4deg); }
+      50% { transform: translateX(115px) rotate(4deg); }
+    }
     .question { max-width: 34ch; margin-bottom: 23px; font-size: clamp(1.45rem, 3vw, 2.15rem); line-height: 1.12; letter-spacing: -.04em; }
     .data-strip { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 27px; }
     .data-chip { padding: 8px 11px; color: var(--ink); background: #eef3e8; border-radius: 8px; font-size: 13px; font-weight: 750; }
@@ -254,9 +368,19 @@
       .play-steps { grid-template-columns: 1fr; }
       .answer-row { flex-direction: column; }
       .primary-button { width: 100%; }
+      .soccer-scene .scene-ball { animation-name: soccer-roll-small; }
+      .runner { animation-name: runner-stride-small; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+    @keyframes soccer-roll-small {
+      0%, 100% { transform: translateX(0) rotate(0); }
+      50% { transform: translateX(110px) rotate(360deg); }
+    }
+    @keyframes runner-stride-small {
+      0%, 100% { transform: translateX(0) rotate(-4deg); }
+      50% { transform: translateX(65px) rotate(4deg); }
     }
   </style>
 </head>
@@ -450,11 +574,30 @@
       const summary = methodResults.length ? `<p class="method-summary"><strong>Method check:</strong> ${methodResults.join(" · ")}</p>` : "";
       return `<div class="complete"><h2>Training complete!</h2><p>You worked through every ${SPORTS.find(sport => sport.id === progress.sport).name} challenge. Switch sports to transfer your method to a new game.</p>${summary}<button class="secondary-button" id="repeat" type="button">Practice this sport again</button></div>`;
     }
+    function renderSportScene() {
+      if (progress.sport === "basketball") {
+        return `<div class="sport-scene basketball-scene" aria-label="Animated basketball bouncing toward a hoop">
+          <span class="scene-label">Court vision</span><span class="scene-sun" aria-hidden="true"></span>
+          <span class="scene-ball" aria-hidden="true">🏀</span><span class="basketball-hoop" aria-hidden="true"></span><span class="scene-ground" aria-hidden="true"></span>
+        </div>`;
+      }
+      if (progress.sport === "track") {
+        return `<div class="sport-scene track-scene" aria-label="Animated runner moving along a track">
+          <span class="scene-label">Find your pace</span><span class="scene-sun" aria-hidden="true"></span>
+          <span class="runner" aria-hidden="true">🏃</span><span class="track-lane" aria-hidden="true"></span><span class="scene-ground" aria-hidden="true"></span>
+        </div>`;
+      }
+      return `<div class="sport-scene soccer-scene" aria-label="Animated soccer ball rolling across a field">
+        <span class="scene-label">Read the field</span><span class="scene-sun" aria-hidden="true"></span>
+        <span class="scene-ball" aria-hidden="true">⚽</span><span class="scene-ground" aria-hidden="true"></span>
+      </div>`;
+    }
     function renderChallenge(challenge) {
       const position = sportChallenges().findIndex(item => item.id === challenge.id) + 1;
       return `
         <article class="challenge" aria-labelledby="question">
           <div class="challenge-head"><span class="tag">${challenge.tag}</span><span class="challenge-number">Challenge ${position} of ${sportChallenges().length}</span></div>
+          ${renderSportScene()}
           <h3 class="question" id="question">${challenge.prompt}</h3>
           <div class="data-strip">${challenge.chips.map(chip => `<span class="data-chip">${chip}</span>`).join("")}</div>
           <div class="play-steps" aria-label="Three steps for solving">
